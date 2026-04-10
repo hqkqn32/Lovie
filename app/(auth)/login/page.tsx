@@ -56,10 +56,10 @@ export default function LoginPage() {
   })
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-background px-4 py-12">
-      <Card className="w-full max-w-md">
+    <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
+      <Card className="w-full max-w-md ring-1 ring-primary/10">
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
+          <CardTitle className="text-primary">Sign in</CardTitle>
           <CardDescription>We’ll email you a magic link to sign in.</CardDescription>
         </CardHeader>
         <CardContent>

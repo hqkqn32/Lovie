@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useWatch } from "react-hook-form"
@@ -61,6 +62,7 @@ function formatMoney(amount: string) {
 
 export function DashboardClient({ email }: { email: string }) {
   const queryClient = useQueryClient()
+  const router = useRouter()
   const [open, setOpen] = React.useState(false)
 
   const form = useForm<CreateRequestValues>({
@@ -257,7 +259,12 @@ export function DashboardClient({ email }: { email: string }) {
               ) : (
                 <div className="grid gap-3">
                   {requestsQuery.data?.sent?.map((r) => (
-                    <Card key={r.id} size="sm">
+                    <Card
+                      key={r.id}
+                      size="sm"
+                      className="cursor-pointer hover:bg-gray-50/50 transition-colors"
+                      onClick={() => router.push(`/dashboard/request/${r.id}`)}
+                    >
                       <CardContent className="grid gap-2 pt-3">
                         <div className="flex items-start justify-between gap-4">
                           <div className="grid gap-0.5">
@@ -308,7 +315,12 @@ export function DashboardClient({ email }: { email: string }) {
               ) : (
                 <div className="grid gap-3">
                   {requestsQuery.data?.received?.map((r) => (
-                    <Card key={r.id} size="sm">
+                    <Card
+                      key={r.id}
+                      size="sm"
+                      className="cursor-pointer hover:bg-gray-50/50 transition-colors"
+                      onClick={() => router.push(`/dashboard/request/${r.id}`)}
+                    >
                       <CardContent className="grid gap-2 pt-3">
                         <div className="flex items-start justify-between gap-4">
                           <div className="grid gap-0.5">

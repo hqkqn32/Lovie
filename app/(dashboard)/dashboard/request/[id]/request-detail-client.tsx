@@ -205,11 +205,7 @@ export function RequestDetailClient({
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => {
-                          payMutation.mutate()
-                        }}
-                      >
+                      <AlertDialogAction onClick={() => payMutation.mutate()}>
                         Confirm Payment
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -236,11 +232,7 @@ export function RequestDetailClient({
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Back</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => {
-                          declineMutation.mutate()
-                        }}
-                      >
+                      <AlertDialogAction onClick={() => declineMutation.mutate()}>
                         Decline
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -265,11 +257,7 @@ export function RequestDetailClient({
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Back</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => {
-                        cancelMutation.mutate()
-                      }}
-                    >
+                    <AlertDialogAction onClick={() => cancelMutation.mutate()}>
                       Cancel Request
                     </AlertDialogAction>
                   </AlertDialogFooter>

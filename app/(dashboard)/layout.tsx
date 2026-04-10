@@ -13,11 +13,11 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
-      <header className="border-b bg-background">
+      <header className="border-b border-primary/20 bg-primary text-primary-foreground">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3">
           <div className="flex flex-col">
             <span className="text-sm font-medium">P2P Payment Requests</span>
-            <span className="text-xs text-muted-foreground">{user.email}</span>
+            <span className="text-xs text-primary-foreground/80">{user.email}</span>
           </div>
           <LogoutButton />
         </div>

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 type RequestStatus = "PENDING" | "PAID" | "DECLINED" | "EXPIRED" | "CANCELLED"
 
 const styles: Record<RequestStatus, string> = {
-  PENDING: "bg-yellow-100 text-yellow-900 ring-yellow-200",
+  PENDING: "bg-accent/15 text-accent ring-accent/30",
   PAID: "bg-green-100 text-green-900 ring-green-200",
   DECLINED: "bg-red-100 text-red-900 ring-red-200",
   EXPIRED: "bg-gray-100 text-gray-900 ring-gray-200",

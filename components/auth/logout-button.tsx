@@ -13,7 +13,8 @@ export function LogoutButton() {
 
   return (
     <Button
-      variant="outline"
+      variant="ghost"
+      className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
       disabled={isLoading}
       onClick={async () => {
         setIsLoading(true)
