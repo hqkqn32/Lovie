@@ -141,7 +141,7 @@ export function DashboardClient({ email }: { email: string }) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Welcome, {email}</p>
         </div>
 
@@ -235,7 +235,7 @@ export function DashboardClient({ email }: { email: string }) {
           <Card>
             <CardHeader>
               <CardTitle>Sent Requests</CardTitle>
-              <CardDescription>Requests you’ve sent to others.</CardDescription>
+              <CardDescription>Requests you've sent to others.</CardDescription>
             </CardHeader>
             <CardContent>
               {requestsQuery.isLoading ? (
@@ -244,7 +244,7 @@ export function DashboardClient({ email }: { email: string }) {
                 </div>
               ) : requestsQuery.isError ? (
                 <div className="rounded-lg border border-dashed p-8 text-center">
-                  <p className="text-sm font-medium">Couldn’t load requests</p>
+                  <p className="text-sm font-medium">Couldn't load requests</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {requestsQuery.error.message}
                   </p>
@@ -253,7 +253,7 @@ export function DashboardClient({ email }: { email: string }) {
                 <div className="rounded-lg border border-dashed p-8 text-center">
                   <p className="text-sm font-medium">No sent requests yet</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Click “New Request” to request a payment.
+                    Click "New Request" to request a payment.
                   </p>
                 </div>
               ) : (
@@ -262,14 +262,14 @@ export function DashboardClient({ email }: { email: string }) {
                     <Card
                       key={r.id}
                       size="sm"
-                      className="cursor-pointer hover:bg-gray-50/50 transition-colors"
+                      className="cursor-pointer hover:shadow-md hover:border-gray-300 transition-all"
                       onClick={() => router.push(`/dashboard/request/${r.id}`)}
                     >
-                      <CardContent className="grid gap-2 pt-3">
+                      <CardContent className="grid gap-2 p-5">
                         <div className="flex items-start justify-between gap-4">
-                          <div className="grid gap-0.5">
-                            <div className="text-sm font-medium">{formatMoney(r.amount)}</div>
-                            <div className="text-xs text-muted-foreground">
+                          <div className="grid gap-1">
+                            <div className="text-xl font-semibold">{formatMoney(r.amount)}</div>
+                            <div className="text-sm text-muted-foreground">
                               To {r.recipientEmail}
                             </div>
                           </div>
@@ -300,7 +300,7 @@ export function DashboardClient({ email }: { email: string }) {
                 </div>
               ) : requestsQuery.isError ? (
                 <div className="rounded-lg border border-dashed p-8 text-center">
-                  <p className="text-sm font-medium">Couldn’t load requests</p>
+                  <p className="text-sm font-medium">Couldn't load requests</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {requestsQuery.error.message}
                   </p>
@@ -309,7 +309,7 @@ export function DashboardClient({ email }: { email: string }) {
                 <div className="rounded-lg border border-dashed p-8 text-center">
                   <p className="text-sm font-medium">No received requests yet</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    When someone requests money from you, it’ll show up here.
+                    When someone requests money from you, it'll show up here.
                   </p>
                 </div>
               ) : (
@@ -318,14 +318,14 @@ export function DashboardClient({ email }: { email: string }) {
                     <Card
                       key={r.id}
                       size="sm"
-                      className="cursor-pointer hover:bg-gray-50/50 transition-colors"
+                      className="cursor-pointer hover:shadow-md hover:border-gray-300 transition-all"
                       onClick={() => router.push(`/dashboard/request/${r.id}`)}
                     >
-                      <CardContent className="grid gap-2 pt-3">
+                      <CardContent className="grid gap-2 p-5">
                         <div className="flex items-start justify-between gap-4">
-                          <div className="grid gap-0.5">
-                            <div className="text-sm font-medium">{formatMoney(r.amount)}</div>
-                            <div className="text-xs text-muted-foreground">
+                          <div className="grid gap-1">
+                            <div className="text-xl font-semibold">{formatMoney(r.amount)}</div>
+                            <div className="text-sm text-muted-foreground">
                               From {r.sender?.email ?? "Unknown"}
                             </div>
                           </div>
@@ -346,4 +346,3 @@ export function DashboardClient({ email }: { email: string }) {
     </div>
   )
 }
-
