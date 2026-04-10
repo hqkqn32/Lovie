@@ -36,12 +36,12 @@ export default function LoginPage() {
     try {
       const supabase = createClient()
       const { error } = await supabase.auth.signInWithOtp({
-  email,
-  options: {
-    emailRedirectTo: `${window.location.origin}/auth/callback`,
-    shouldCreateUser: true,
-  },
-})
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          shouldCreateUser: true,
+        },
+      })
 
       if (error) {
         toast.error(error.message || "Failed to send magic link, try again")
@@ -58,10 +58,20 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-      <Card className="w-full max-w-md ring-1 ring-primary/10">
+      {/* 🚀 TEST BANNER */}
+      <div className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center py-4 z-50 border-b-4 border-red-600">
+        <p className="text-3xl font-black">
+          🚀 DEPLOYMENT TEST v6ed9039
+        </p>
+        <p className="text-lg font-bold">
+          {new Date().toLocaleString('tr-TR')}
+        </p>
+      </div>
+
+      <Card className="w-full max-w-md ring-1 ring-primary/10 mt-24">
         <CardHeader>
           <CardTitle className="text-primary">Sign in</CardTitle>
-          <CardDescription>We’ll email you a magic link to sign in.</CardDescription>
+          <CardDescription>We'll email you a magic link to sign in.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="grid gap-4">
@@ -96,4 +106,3 @@ export default function LoginPage() {
     </div>
   )
 }
-
