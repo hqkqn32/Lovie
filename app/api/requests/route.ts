@@ -66,3 +66,33 @@ export async function POST(req: NextRequest) {
   }
 }
 
+export async function GET() {
+  try {
+    const user = await requireAuth()
+    if (!user.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
+    }
+
+    const email = user.email.trim().toLowerCase()
+
+    const [sent, received] = await Promise.all([
+      prisma.paymentRequest.findMany({
+        where: { senderId: user.id },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.paymentRequest.findMany({
+        where: { recipientEmail: email },
+        include: { sender: { select: { email: true } } },
+        orderBy: { createdAt: "desc" },
+      }),
+    ])
+
+    return NextResponse.json({ sent, received })
+  } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
+    }
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+

@@ -4,8 +4,9 @@ import * as React from "react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useWatch } from "react-hook-form"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
+import { format } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,6 +23,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { StatusBadge } from "@/components/request/status-badge"
 
 const createRequestSchema = z.object({
   recipientEmail: z.string().email("Please enter a valid email address"),
@@ -34,6 +36,28 @@ const createRequestSchema = z.object({
 })
 
 type CreateRequestValues = z.infer<typeof createRequestSchema>
+
+type RequestStatus = "PENDING" | "PAID" | "DECLINED" | "EXPIRED" | "CANCELLED"
+
+type RequestItem = {
+  id: string
+  amount: string
+  recipientEmail: string
+  status: RequestStatus
+  createdAt: string
+  sender?: { email: string | null }
+}
+
+type RequestsResponse = {
+  sent: RequestItem[]
+  received: RequestItem[]
+}
+
+function formatMoney(amount: string) {
+  const n = Number.parseFloat(amount)
+  if (!Number.isFinite(n)) return `$${amount}`
+  return n.toLocaleString(undefined, { style: "currency", currency: "USD" })
+}
 
 export function DashboardClient({ email }: { email: string }) {
   const queryClient = useQueryClient()
@@ -84,6 +108,30 @@ export function DashboardClient({ email }: { email: string }) {
     },
     onError: (err) => {
       toast.error(err.message || "Failed to create request")
+    },
+  })
+
+  const requestsQuery = useQuery({
+    queryKey: ["requests"],
+    queryFn: async (): Promise<RequestsResponse> => {
+      const res = await fetch("/api/requests")
+      const json = (await res.json()) as
+        | RequestsResponse
+        | { error?: string | { message?: string } | unknown }
+      if (!res.ok) {
+        const err = (json as { error?: unknown }).error
+        if (typeof err === "string") throw new Error(err)
+        if (
+          err &&
+          typeof err === "object" &&
+          "message" in err &&
+          typeof (err as { message?: unknown }).message === "string"
+        ) {
+          throw new Error((err as { message: string }).message)
+        }
+        throw new Error("Failed to load requests")
+      }
+      return json as RequestsResponse
     },
   })
 
@@ -188,12 +236,46 @@ export function DashboardClient({ email }: { email: string }) {
               <CardDescription>Requests you’ve sent to others.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg border border-dashed p-8 text-center">
-                <p className="text-sm font-medium">No sent requests yet</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Click “New Request” to request a payment.
-                </p>
-              </div>
+              {requestsQuery.isLoading ? (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="text-sm text-muted-foreground">Loading…</p>
+                </div>
+              ) : requestsQuery.isError ? (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="text-sm font-medium">Couldn’t load requests</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {requestsQuery.error.message}
+                  </p>
+                </div>
+              ) : ((requestsQuery.data?.sent?.length ?? 0) === 0) ? (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="text-sm font-medium">No sent requests yet</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Click “New Request” to request a payment.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-3">
+                  {requestsQuery.data?.sent?.map((r) => (
+                    <Card key={r.id} size="sm">
+                      <CardContent className="grid gap-2 pt-3">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="grid gap-0.5">
+                            <div className="text-sm font-medium">{formatMoney(r.amount)}</div>
+                            <div className="text-xs text-muted-foreground">
+                              To {r.recipientEmail}
+                            </div>
+                          </div>
+                          <StatusBadge status={r.status} />
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {format(new Date(r.createdAt), "PP p")}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -205,12 +287,46 @@ export function DashboardClient({ email }: { email: string }) {
               <CardDescription>Requests sent to your email.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg border border-dashed p-8 text-center">
-                <p className="text-sm font-medium">No received requests yet</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  When someone requests money from you, it’ll show up here.
-                </p>
-              </div>
+              {requestsQuery.isLoading ? (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="text-sm text-muted-foreground">Loading…</p>
+                </div>
+              ) : requestsQuery.isError ? (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="text-sm font-medium">Couldn’t load requests</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {requestsQuery.error.message}
+                  </p>
+                </div>
+              ) : ((requestsQuery.data?.received?.length ?? 0) === 0) ? (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="text-sm font-medium">No received requests yet</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    When someone requests money from you, it’ll show up here.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-3">
+                  {requestsQuery.data?.received?.map((r) => (
+                    <Card key={r.id} size="sm">
+                      <CardContent className="grid gap-2 pt-3">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="grid gap-0.5">
+                            <div className="text-sm font-medium">{formatMoney(r.amount)}</div>
+                            <div className="text-xs text-muted-foreground">
+                              From {r.sender?.email ?? "Unknown"}
+                            </div>
+                          </div>
+                          <StatusBadge status={r.status} />
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {format(new Date(r.createdAt), "PP p")}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
