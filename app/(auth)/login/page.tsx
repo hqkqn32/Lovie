@@ -36,11 +36,12 @@ export default function LoginPage() {
     try {
       const supabase = createClient()
       const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
+  email,
+  options: {
+    emailRedirectTo: `${window.location.origin}/auth/callback`,
+    shouldCreateUser: true,
+  },
+})
 
       if (error) {
         toast.error(error.message || "Failed to send magic link, try again")
