@@ -1,0 +1,60 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  
+  sentRequests     PaymentRequest[] @relation("SentRequests")
+  receivedRequests PaymentRequest[] @relation("ReceivedRequests")
+  
+  @@index([email])
+}
+
+enum RequestStatus {
+  PENDING
+  PAID
+  DECLINED
+  EXPIRED
+  CANCELLED
+}
+
+model PaymentRequest {
+  id              String        @id @default(uuid())
+  amount          Decimal       @db.Decimal(10, 2) // CRITICAL: Fintech precision
+  note            String?       @db.VarChar(500)
+  status          RequestStatus @default(PENDING)
+  shareableLink   String        @unique @default(cuid())
+  
+  // Sender (always a registered user)
+  senderId        String
+  sender          User          @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  
+  // Recipient (may or may not be registered)
+  recipientEmail  String
+  recipientId     String?
+  recipient       User?         @relation("ReceivedRequests", fields: [recipientId], references: [id], onDelete: SetNull)
+  
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  expiresAt       DateTime      // Set to createdAt + 7 days
+  paidAt          DateTime?
+  declinedAt      DateTime?
+  cancelledAt     DateTime?
+  
+  @@index([senderId])
+  @@index([recipientEmail])
+  @@index([status])
+  @@index([shareableLink])
+  @@index([expiresAt]) // For future expiration cleanup job
+}
+
