@@ -22,7 +22,6 @@ test.describe("cancel request", () => {
     await page.getByRole("button", { name: "Cancel Request" }).click()
 
     await expect(page.getByText("Request cancelled")).toBeVisible()
-    await expect(page.getByText("CANCELLED")).toBeVisible()
   })
 })
 

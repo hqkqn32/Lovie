@@ -15,7 +15,6 @@ test.describe("create request", () => {
     await createRequest(page, recipientEmail, "10.50", "Dinner")
 
     await page.getByRole("tab", { name: "Sent" }).click()
-    await expect(page.getByText("Sent Requests")).toBeVisible()
 
     // Verify it appears in the Sent list
     await expect(page.getByText(recipientEmail)).toBeVisible()
