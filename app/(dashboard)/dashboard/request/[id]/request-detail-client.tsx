@@ -4,7 +4,7 @@ import * as React from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { toast } from "sonner"
-import { Loader2Icon } from "lucide-react"
+import { CopyIcon, Loader2Icon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -172,7 +172,22 @@ export function RequestDetailClient({
             </div>
             <div className="flex items-center justify-between gap-4">
               <span className="text-muted-foreground">Shareable link</span>
-              <span className="font-mono text-xs">/request/{req.shareableLink}</span>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs">/request/{req.shareableLink}</span>
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  className="h-7 px-2"
+                  onClick={async () => {
+                    const fullUrl = `${window.location.origin}/request/${req.shareableLink}`
+                    await navigator.clipboard.writeText(fullUrl)
+                    toast.success("Link copied to clipboard!")
+                  }}
+                >
+                  <CopyIcon className="size-4" />
+                  <span className="sr-only">Copy to clipboard</span>
+                </Button>
+              </div>
             </div>
             {req.note ? (
               <div className="grid gap-1">
