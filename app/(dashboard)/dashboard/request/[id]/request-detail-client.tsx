@@ -1,10 +1,11 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { toast } from "sonner"
-import { CopyIcon, Loader2Icon } from "lucide-react"
+import { CopyIcon, Loader2Icon, ChevronLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -65,6 +66,7 @@ export function RequestDetailClient({
   viewerEmail: string
   viewerId: string
 }) {
+  const router = useRouter()
   const queryClient = useQueryClient()
 
   const requestQuery = useQuery({
@@ -125,7 +127,7 @@ export function RequestDetailClient({
     return (
       <Card>
         <CardContent className="p-8">
-          <p className="text-sm font-medium">Couldn’t load request</p>
+          <p className="text-sm font-medium">Couldn't load request</p>
           <p className="mt-1 text-sm text-muted-foreground">
             {requestQuery.isError ? requestQuery.error.message : "Unknown error"}
           </p>
@@ -142,6 +144,15 @@ export function RequestDetailClient({
 
   return (
     <div className="flex flex-col gap-6">
+      <Button 
+        variant="ghost" 
+        onClick={() => router.push('/dashboard')}
+        className="-ml-2 w-fit hover:bg-gray-100"
+      >
+        <ChevronLeft className="h-4 w-4 mr-1" />
+        Back to Dashboard
+      </Button>
+
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Request details</h1>
         <p className="text-sm text-muted-foreground">ID: {req.id}</p>
@@ -291,4 +302,3 @@ export function RequestDetailClient({
     </div>
   )
 }
-
