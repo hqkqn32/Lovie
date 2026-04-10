@@ -3,8 +3,8 @@ import { createRequest, loginWithMagicLink } from "../helpers"
 
 test.describe("create request", () => {
   test.skip(
-    !process.env.PLAYWRIGHT_MAGIC_LINK_CALLBACK_URL,
-    "Set PLAYWRIGHT_MAGIC_LINK_CALLBACK_URL to enable auth in E2E tests."
+    !process.env.SUPABASE_SERVICE_ROLE_KEY,
+    "Set SUPABASE_SERVICE_ROLE_KEY to enable auth in E2E tests."
   )
 
   test("user can create a payment request", async ({ page }) => {
